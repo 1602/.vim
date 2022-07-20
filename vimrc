@@ -1,18 +1,18 @@
-set spell spelllang=en_gb
+" set spell spelllang=en_gb
 
 " keep 3 lines on the bottom and top when scrolling
 set so=3
 
 " highlight cursor line and column
-set cursorline
-set cursorcolumn
+" set cursorline
+" set cursorcolumn
 
 " line numbers
-set number
+" set number
 set relativenumber
 
 " autocomplete menu in cmd
-set wildmenu
+" set wildmenu
 
 " turn off annoying stuff
 set noswapfile
@@ -20,19 +20,41 @@ set nowritebackup
 set nocompatible
 
 " highlight 80 column
-set colorcolumn=80
+" set colorcolumn=80
 
 " allow switching to other buffer without saving the current one
 set hidden
 
 " autocomplete by tab
-imap <Tab> <C-n>
+" imap <Tab> <C-n>
 
 imap jj <ESC>:w<CR>
 imap jk <ESC>:w<CR>
 imap kk <ESC>:w<CR>
 nmap j gj
 nmap k gk
+
+au FileType go nmap <Leader>a :GoAlternate<CR>
+au FileType go nmap <Leader>c :GoCoverage<CR>
+au FileType go nmap <Leader>f :GoTestFunc<CR>
+au FileType go nmap <Leader>b :GoTestCompile<CR>
+au FileType go nmap <Leader>e :GoIfErr<CR>
+au FileType go nmap <Leader>t :GoTest<CR>
+au FileType go nmap <Leader>i :GoInfo<CR>
+
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+" let g:go_auto_sameids = 1
+
+" let g:go_auto_type_info = 1
+let g:go_addtags_transform = 'camelcase'
+
 
 " delay before execution
 set tm=400
@@ -114,7 +136,6 @@ if has("autocmd")
 
   autocmd BufNewFile,BufRead *.ejs set filetype=html
   autocmd BufNewFile,BufRead *.vue set filetype=html
-  autocmd BufNewFile,BufRead Jakefile set filetype=javascript
   autocmd FileType yaml       setlocal ts=2 sts=2 sw=2 et
   autocmd FileType jade       setlocal ts=2 sts=2 sw=2 et
   autocmd FileType ejs        setlocal ts=4 sts=4 sw=4 et
@@ -123,11 +144,15 @@ if has("autocmd")
   autocmd FileType cucumber   setlocal ts=2 sts=2 sw=2 noet nolist
   autocmd FileType make       setlocal ts=4 sts=4 sw=4 noet
   autocmd FileType javascript setlocal ts=4 sts=4 sw=4 et
+  autocmd FileType typescript setlocal ts=4 sts=4 sw=4 et
+  autocmd FileType svelte     setlocal ts=4 sts=4 sw=4 et
   autocmd FileType json       setlocal ts=4 sts=4 sw=4 et
+  autocmd FileType sh         setlocal ts=4 sts=4 sw=4 et
   autocmd FileType vue        setlocal ts=4 sts=4 sw=4 et
   autocmd FileType coffee     setlocal ts=4 sts=4 sw=4 et
   autocmd FileType html       setlocal ts=4 sts=4 sw=4 et
-  autocmd FileType css        setlocal ts=2 sts=2 sw=2 et
+  autocmd FileType css        setlocal ts=4 sts=4 sw=4 et
+  autocmd FileType go         setlocal ts=4 sts=4 sw=4
 
 
    " When editing a file, always jump to the last known cursor position.
@@ -147,7 +172,13 @@ endif
 
 call plug#begin()
 
-Plug 'Valloric/YouCompleteMe'
+let g:typescript_compiler_binary = 'tsc'
+let g:typescript_compiler_options = '--lib ES2015'
+Plug 'leafgarland/typescript-vim'
+
+" Plug 'burner/vim-svelte'
+
+"Plug 'Valloric/YouCompleteMe'
 
 " The Gruvbox suite of color schemes is developed with an extreme level of
 " thought and care.
@@ -163,15 +194,84 @@ Plug 'scrooloose/syntastic'
 
 
 " Elm plugin for vim
-Plug 'elmcast/elm-vim'
+" Plug 'elmcast/elm-vim'
 
 
 " Surround
-Plug 'tpope/vim-surround'
+" Plug 'tpope/vim-surround'
 
 
 " Startify
 Plug 'mhinz/vim-startify'
+
+" Copilot
+Plug 'github/copilot.vim'
+
+
+" Wakatime
+" Plug 'wakatime/vim-wakatime'
+
+
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" Gitgutter
+" Plug 'airblade/vim-gitgutter'
+
+
+" Flow
+" Plug 'flowtype/vim-flow'
+
+" Ale
+Plug 'w0rp/ale'
+
+" vim-plug
+Plug 'Shougo/deoplete.nvim'
+Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
+
+" let g:ale_set_quickfix = 1
+" let g:ale_open_list = 1
+" Error and warning signs.
+" let g:ale_sign_error = '⤫'
+" let g:ale_sign_warning = '⚠'
+let g:ale_sign_column_always = 1
+" Enable integration with airline.
+let g:airline#extensions#ale#enabled = 1
+
+:let mapleader = ","
+
+" nmap <Leader>n :ALEPreviousWrap<CR>
+" nmap <Leader>m :ALENextWrap<CR>
+
+let g:flow#autoclose = 1
+" Plug 'neovim/nvim-lspconfig'
+
+Plug 'prabirshrestha/async.vim'
+" Plug 'prabirshrestha/vim-lsp'
+"
+" if executable('flow-language-server')
+"     au User lsp_setup call lsp#register_server({
+"         \ 'name': 'flow-language-server',
+"         \ 'cmd': {server_info->[&shell, &shellcmdflag, 'flow-language-server --stdio']},
+"         \ 'root_uri':{server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), '.flowconfig'))},
+"         \ 'whitelist': ['javascript'],
+"         \ })
+"
+"     autocmd FileType javascript setlocal omnifunc=lsp#complete
+"
+" endif
+
+Plug 'pangloss/vim-javascript'
+
+let g:javascript_plugin_flow = 1
+
+" language tools
+" Plug 'vim-scripts/LanguageTool'
+
+
+
+" let g:languagetool_jar='$HOME/LanguageTool-4.0/languagetool-commandline.jar'
+
+
 
 let g:startify_custom_header_quotes = [
     \ ["Everybody has a plan until they get punched in the mouth. - Mike Tyson" ],
@@ -193,16 +293,20 @@ let g:startify_custom_header_quotes = [
     \ ["Sometimes magic is just someone spending more time on something than anyone else might reasonably expect. - Teller" ],
     \ ["Don't tell me what you value. Show me your budget, and I\'ll tell you what you value. - Joe Biden quoting his father" ],
     \ ["Work on stuff that matters. - Tim O\'Reilly" ],
-    \ ["You have to say something. It can\'t all be technique. - Woody Allen (on great actors)" ]
+    \ ["The act of describing a program in unambiguous detail and the act of programming are one and the same. — Kevlin Henney" ],
+    \ ["You have to say something. It can\'t all be technique. - Woody Allen (on great actors)" ],
+    \ ["Dynamic typing: The belief that you can’t explain to a computer why your code works, but you can keep track of it all in your head.  — @chris__martin" ],
+    \ ["– What do we want?", "– Now!", "– When do we want it?", "– Fewer race conditions!", "@wellendonner"]
     \ ]
+" from https://henrikwarne.com/2016/04/17/more-good-programming-quotes/
 
 
 call plug#end()
 
 " you complete me
-let g:ycm_semantic_triggers = {
-     \ 'elm' : ['.'],
-     \}
+" let g:ycm_semantic_triggers = {
+     " \ 'elm' : ['.'],
+     " \}
 
 " gruvbox
 set background=dark
@@ -216,14 +320,28 @@ let g:airline#extensions#syntastic#enabled=0
 let g:elm_detailed_complete = 1
 " let g:elm_format_autosave = 1
 let g:elm_syntastic_show_warnings = 1
+let g:elm_make_show_warnings = 1
 let g:elm_setup_keybindings = 1
 
 " syntastic
-let g:syntastic_elm_checkers = [ 'elm_make' ]
-let g:syntastic_javascript_checkers=['eslint']
-let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_elm_checkers = [ 'elm make' ]
+" let g:syntastic_typescript_checkers=['tslint']
+" let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 set laststatus=2
 
+
+" vim-go
+let g:go_fmt_command = "goimports"
+
+
+let g:python3_host_prog  = '/usr/local/bin/python3'
+
+if has('nvim')
+    " Enable deoplete on startup
+    let g:deoplete#enable_at_startup = 1
+endif
+
+" call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
