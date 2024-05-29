@@ -41,6 +41,7 @@ au FileType go nmap <Leader>b :GoTestCompile<CR>
 au FileType go nmap <Leader>e :GoIfErr<CR>
 au FileType go nmap <Leader>t :GoTest<CR>
 au FileType go nmap <Leader>i :GoInfo<CR>
+au FileType go inoremap <buffer> . .<C-x><C-o>
 
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
@@ -137,14 +138,12 @@ if has("autocmd")
   autocmd BufNewFile,BufRead *.ejs set filetype=html
   autocmd BufNewFile,BufRead *.vue set filetype=html
   autocmd FileType yaml       setlocal ts=2 sts=2 sw=2 et
-  autocmd FileType jade       setlocal ts=2 sts=2 sw=2 et
   autocmd FileType ejs        setlocal ts=4 sts=4 sw=4 et
   autocmd FileType elm        setlocal ts=4 sts=4 sw=4 et
-  autocmd FileType ruby       setlocal ts=2 sts=2 sw=2 et
-  autocmd FileType cucumber   setlocal ts=2 sts=2 sw=2 noet nolist
   autocmd FileType make       setlocal ts=4 sts=4 sw=4 noet
   autocmd FileType javascript setlocal ts=4 sts=4 sw=4 et
   autocmd FileType typescript setlocal ts=4 sts=4 sw=4 et
+  autocmd FileType typescriptreact setlocal ts=4 sts=4 sw=4 et
   autocmd FileType svelte     setlocal ts=4 sts=4 sw=4 et
   autocmd FileType json       setlocal ts=4 sts=4 sw=4 et
   autocmd FileType sh         setlocal ts=4 sts=4 sw=4 et
@@ -175,6 +174,21 @@ call plug#begin()
 let g:typescript_compiler_binary = 'tsc'
 let g:typescript_compiler_options = '--lib ES2015'
 Plug 'leafgarland/typescript-vim'
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+Plug 'Quramy/tsuquyomi'
+Plug 'sbdchd/neoformat'
+
+let g:neoformat_try_node_exe = 1
+let g:neoformat_try_formatprg = 1
+autocmd BufWritePre,TextChanged,InsertLeave *.js Neoformat
+autocmd BufWritePre,TextChanged,InsertLeave *.ts Neoformat
+
+
+au FileType typescript inoremap <buffer> . .<C-x><C-o>
+au FileType typescript nmap <Leader>i :TsuImport<CR>
+au FileType typescript nmap <Leader>m :lfirst<CR>
+au FileType typescript nmap <Leader>n :lnext<CR>
+au FileType typescript nmap <Leader>b :lprevious<CR>
 
 " Plug 'burner/vim-svelte'
 
@@ -196,16 +210,11 @@ Plug 'scrooloose/syntastic'
 " Elm plugin for vim
 " Plug 'elmcast/elm-vim'
 
-
-" Surround
-" Plug 'tpope/vim-surround'
-
-
 " Startify
 Plug 'mhinz/vim-startify'
 
 " Copilot
-Plug 'github/copilot.vim'
+" Plug 'github/copilot.vim'
 
 
 " Wakatime
@@ -218,15 +227,10 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " Plug 'airblade/vim-gitgutter'
 
 
-" Flow
-" Plug 'flowtype/vim-flow'
-
 " Ale
 Plug 'w0rp/ale'
 
 " vim-plug
-Plug 'Shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}
 
 " let g:ale_set_quickfix = 1
 " let g:ale_open_list = 1
@@ -242,23 +246,7 @@ let g:airline#extensions#ale#enabled = 1
 " nmap <Leader>n :ALEPreviousWrap<CR>
 " nmap <Leader>m :ALENextWrap<CR>
 
-let g:flow#autoclose = 1
-" Plug 'neovim/nvim-lspconfig'
-
 Plug 'prabirshrestha/async.vim'
-" Plug 'prabirshrestha/vim-lsp'
-"
-" if executable('flow-language-server')
-"     au User lsp_setup call lsp#register_server({
-"         \ 'name': 'flow-language-server',
-"         \ 'cmd': {server_info->[&shell, &shellcmdflag, 'flow-language-server --stdio']},
-"         \ 'root_uri':{server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), '.flowconfig'))},
-"         \ 'whitelist': ['javascript'],
-"         \ })
-"
-"     autocmd FileType javascript setlocal omnifunc=lsp#complete
-"
-" endif
 
 Plug 'pangloss/vim-javascript'
 
@@ -303,13 +291,8 @@ let g:startify_custom_header_quotes = [
 
 call plug#end()
 
-" you complete me
-" let g:ycm_semantic_triggers = {
-     " \ 'elm' : ['.'],
-     " \}
-
 " gruvbox
-set background=dark
+set background=light
 colorscheme gruvbox
 
 " airline
@@ -337,11 +320,4 @@ set laststatus=2
 let g:go_fmt_command = "goimports"
 
 
-let g:python3_host_prog  = '/usr/local/bin/python3'
-
-if has('nvim')
-    " Enable deoplete on startup
-    let g:deoplete#enable_at_startup = 1
-endif
-
-" call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
+let g:python3_host_prog  = '/usr/bin/python3'
